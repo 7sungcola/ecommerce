@@ -3,10 +3,15 @@ import json, jwt, bcrypt
 from django.views           import View
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
+from django.shortcuts       import render
 
 from .models                import User
 from .validators            import Validator
 from my_settings            import SECRET_KEY, ALGORITHM
+
+
+def index(request):
+    return render(request, 'user/index.html', {})
 
 class SignUpView(View):
     def post(self, request):
