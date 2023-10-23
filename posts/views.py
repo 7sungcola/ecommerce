@@ -16,10 +16,10 @@ class PostView(View):
 
             post    = Post.objects.get(id=post_id)
 
-            return JsonResponse({'title' : post.title, 'body' : post.body}, status = 200)
+            return JsonResponse({'title' : post.title, 'body' : post.body}, status=200)
 
         except ValidationError as e:
-            return JsonResponse({'MESSAGE' : e.message}, status = 400)
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
     @authorization
     def post(self, request):
@@ -38,10 +38,10 @@ class PostView(View):
                 user_id = user_id
             )
 
-            return JsonResponse({'MESSAGE' : 'Created'}, status = 201)
+            return JsonResponse({'MESSAGE' : 'Created'}, status=201)
 
         except ValidationError as e:
-            return JsonResponse({'MESSAGE' : e.message}, status = 400)
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
     @authorization
     def patch(self, request):
@@ -56,17 +56,17 @@ class PostView(View):
             post    = Post.objects.get(id=post_id)
 
             if not post.user_id == user_id:
-                return JsonResponse({'MESSAGE' : 'Not permitted to update this post'}, status = 400)
+                return JsonResponse({'ERROR' : 'Not permitted to update this post'}, status=400)
 
             post.title = data['title']
             post.body = data['body']
 
             post.save()
 
-            return JsonResponse({'MESSAGE' : 'Updated'}, status = 200)
+            return JsonResponse({'MESSAGE' : 'Updated'}, status=200)
 
         except ValidationError as e:
-            return JsonResponse({'MESSAGE' : e.message}, status = 400)
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
 
     @authorization
@@ -82,14 +82,14 @@ class PostView(View):
             post    = Post.objects.get(id=post_id)
 
             if not post.user_id == user_id:
-                return JsonResponse({'MESSAGE' : 'Not permitted to delete this post'}, status = 400)
+                return JsonResponse({'ERROR' : 'Not permitted to delete this post'}, status=400)
 
             post.delete()
 
-            return JsonResponse({'MESSAGE' : 'Deleted'}, status = 200)
+            return JsonResponse({'MESSAGE' : 'Deleted'}, status=200)
 
         except ValidationError as e:
-            return JsonResponse({'MESSAGE' : e.message}, status = 400)
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
 class PostListView(View):
     def get(self, request, page_num):
@@ -104,10 +104,10 @@ class PostListView(View):
             total_pages    = math.ceil(total_items / page_size)
             product_offset = list(post_list[offset:limit].values())
 
-            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : product_offset, 'PAGES_TOTAL' : total_pages, 'ITEMS_TOTAL' : total_items}, status = 200)
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : product_offset, 'PAGES_TOTAL' : total_pages, 'ITEMS_TOTAL' : total_items}, status=200)
 
         except KeyError:
-            return JsonResponse({'MESSAGE' : 'Key Error'}, status = 400)
+            return JsonResponse({'ERROR' : 'Key Error'}, status=400)
 
         except ValueError:
-            return JsonResponse({'MESSAGE' : 'Invalid Parameter'}, status = 400)
+            return JsonResponse({'ERROR' : 'Invalid Parameter'}, status=400)

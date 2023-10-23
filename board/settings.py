@@ -131,6 +131,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Image files
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = 'media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -189,8 +194,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/users'
-ACCOUNT_LOGOUT_REDIRECT_URL = '/users'
+LOGIN_REDIRECT_URL = '/users/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/users/'
 ACCOUNT_LOGOUT_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {

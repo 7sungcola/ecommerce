@@ -10,6 +10,10 @@
 <a href="/accounts/logout/">로그아웃</a>
 <br>
 {{ user.username }} 님이 로그인 중
+<br>
+{{ user.email }}
+<br>
+{{ user.last_login }}
 {% else %}
 <a href="{% provider_login_url 'google' %}">구글 로그인</a>
 <br>
