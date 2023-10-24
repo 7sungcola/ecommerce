@@ -50,10 +50,18 @@ def kakao_callback(request):
 
     latest_data = User.objects.latest('id')
 
+    if User.objects.filter(name=name):
+        return JsonResponse({'ERROR' : 'Duplicate Name'}, status=400)
+
+    # temporary for backend usage only until front is figured
+    password = '12345678'
+
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
     User.objects.create(
         name     = name,
         email    = 'test' + str(latest_data.id + 1) + '@naver.com',
-        password = '12345678',
+        password = hashed_password,
     )
 
     return JsonResponse({'MESSAGE' : name}, json_dumps_params={'ensure_ascii':False}, status=200)
