@@ -1,35 +1,36 @@
 import json, jwt, bcrypt, os, requests
 
-from json import JSONDecodeError
-from dotenv                 import load_dotenv
+from dotenv                          import load_dotenv
+from dj_rest_auth.registration.views import SocialLoginView
 
-from django.views           import View
-from django.http            import JsonResponse
-from django.core.exceptions import ValidationError
-from django.shortcuts       import render, redirect
+from django.views                    import View
+from django.http                     import JsonResponse
+from django.core.exceptions          import ValidationError
+from django.shortcuts                import render, redirect
 
-from .models                import User
-from .validators            import Validator
-from my_settings            import SECRET_KEY, ALGORITHM
-
-from allauth.socialaccount.models import SocialAccount
+from .models                         import User
+from .validators                     import Validator
+from my_settings                     import SECRET_KEY, ALGORITHM
 
 load_dotenv()
 
 BASE_URL = 'http://127.0.0.1:8000/'
 
-KAKAO_CALLBACK_URI = BASE_URL + 'users/login/kakao/callback/'
+KAKAO_CALLBACK_URI = BASE_URL + 'users/kakao/callback/'
 
 def kakao_login(request):
     client_id = os.environ.get('KAKAO_REST_API_KEY')
-    print(client_id)
     return redirect(f'https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code')
 
 def kakao_callback(request):
     client_id = os.environ.get('KAKAO_REST_API_KEY')
-    code = request.GET.get('code')
+    client_secret = os.environ.get('KAKAO_SECRET_KEY')
+    code = request.GET.get('code', None)
 
-    token_request       = requests.get(f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&code={code}')
+    if code is None:
+        return JsonResponse({'ERROR': 'failed to get code'}, status=400)
+
+    token_request       = requests.get(f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&code={code}&client_secret={client_secret}')
     token_response_json = token_request.json()
 
     access_token = token_response_json.get('access_token')
@@ -42,9 +43,18 @@ def kakao_callback(request):
     profile_json = profile_request.json()
 
     kakao_account = profile_json.get('kakao_account')
-    email = kakao_account.get('email', None)
-    if email is None:
-        return JsonResponse({'ERROR': 'failed to get email'}, status=400)
+
+    name = kakao_account.get('nickname')
+
+def google_login(request):
+    result = request.user
+    print(result)
+    print(request)
+
+    return JsonResponse({'MESSAGE' : str(result)}, status=200)
+
+def google_callback(request):
+    pass
 
 def index(request):
     return render(request, 'user/index.html', {})
@@ -52,10 +62,10 @@ def index(request):
 class SignUpView(View):
     def post(self, request):
         try:
-            data            = json.loads(request.body)
-
-            email           = data['email']
-            password        = data['password']
+            data     = json.loads(request.body)
+            name     = data['name']
+            email    = data['email']
+            password = data['password']
 
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'ERROR' : 'Account already exists'}, status=400)
@@ -67,6 +77,7 @@ class SignUpView(View):
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             User.objects.create(
+                name     = name,
                 email    = email,
                 password = hashed_password
             )

@@ -51,9 +51,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # allauth - google
     'allauth.socialaccount.providers.google',
-    # allauth - kakao
     'allauth.socialaccount.providers.kakao',
 ]
 
