@@ -1,7 +1,6 @@
 import json, jwt, bcrypt, os, requests
 
 from dotenv                          import load_dotenv
-from dj_rest_auth.registration.views import SocialLoginView
 
 from django.views                    import View
 from django.http                     import JsonResponse
@@ -41,10 +40,23 @@ def kakao_callback(request):
     )
 
     profile_json = profile_request.json()
+    print(profile_json)
 
     kakao_account = profile_json.get('kakao_account')
+    print(kakao_account)
 
-    name = kakao_account.get('nickname')
+    name = kakao_account.get('profile').get('nickname')
+    print(name)
+
+    latest_data = User.objects.latest('id')
+
+    User.objects.create(
+        name     = name,
+        email    = 'test' + str(latest_data.id + 1) + '@naver.com',
+        password = '12345678',
+    )
+
+    return JsonResponse({'MESSAGE' : name}, json_dumps_params={'ensure_ascii':False}, status=200)
 
 def google_login(request):
     result = request.user

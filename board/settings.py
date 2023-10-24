@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'core',
     'users',
     'posts',
+    'items',
     # allauth
     'django.contrib.sites',
     'allauth',
