@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views     import View
 from django.http      import JsonResponse
 
-from .models          import Item
+from .models          import Item, Category
 from core.utils       import authorization
 
 # Create your views here.
@@ -13,14 +13,20 @@ class ItemView(View):
     def post(self, request):
         data  = json.loads(request.body)
 
-        name  = data['name']
-        price = data['price']
-        image = data['image']
+        category = data['category']
+        name     = data['name']
+        price    = data['price']
+        quantity = data['quantity']
+        image    = data['image']
+
+        category = Category.objects.get(name=category)
 
         Item.objects.create(
-            name  = name,
-            price = price,
-            image = image,
+            category_id = category.id,
+            name     = name,
+            price    = price,
+            quantity = quantity,
+            image    = image,
         )
 
         return JsonResponse({'MESSAGE' : 'Items successfully added'}, status=400)
