@@ -11,23 +11,27 @@ from items.models import Item
 class AddCartView(View):
     @authorization
     def get(self, request):
-        user = request.user
+        try:
+            user = request.user
 
-        if not Cart.objects.filter(user_id=user.id).exists():
-            return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
+            if not Cart.objects.filter(user_id=user.id).exists():
+                return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
 
-        carts = Cart.objects.filter(user_id=user.id)
+            carts = Cart.objects.filter(user_id=user.id)
 
-        cart_total = [{
-            'cart_id' : cart.id,
-            'item' : cart.quantity,
-            'name' : cart.item.name,
-            'price' : cart.item.price,
-            'quantity' : cart.item.quantity,
-            'image_url' : cart.item.image_url,
-        } for cart in carts]
+            cart_total = [{
+                'cart_id' : cart.id,
+                'item' : cart.quantity,
+                'name' : cart.item.name,
+                'price' : cart.item.price,
+                'quantity' : cart.item.quantity,
+                'image_url' : cart.item.image_url,
+            } for cart in carts]
 
-        return JsonResponse({'result' : cart_total}, status=200)
+            return JsonResponse({'result' : cart_total}, status=200)
+
+        except ValidationError as e:
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
     @authorization
     def post(self, request):
@@ -55,6 +59,30 @@ class AddCartView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+    @authorization
+    def patch(self, request):
+        try:
+            data = json.loads(request.body)
+
+            user = request.user
+
+            cart_id = data['id']
+            user_id = user.id
+            quantity = data['quantity']
+
+            if not Cart.objects.filter(id=cart_id).exists():
+                return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
+
+            cart = Cart.objects.get(id=cart_id,user__id=user_id)
+
+            cart.quantity = quantity
+            cart.save()
+
+            return JsonResponse({'MESSAGE' : 'Updated'}, status=200)
+
+        except ValidationError as e:
+            return JsonResponse({'ERROR' : e.message}, status=200)
 
     @authorization
     def delete(self, request):
