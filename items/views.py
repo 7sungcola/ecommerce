@@ -40,10 +40,10 @@ class ItemView(View):
 
             Item.objects.create(
                 category_id = category.id,
-                name      = name,
-                price     = price,
-                quantity  = quantity,
-                image_url = image_url,
+                name        = name,
+                price       = price,
+                quantity    = quantity,
+                image_url   = image_url,
             )
 
             return JsonResponse({'MESSAGE' : 'Created'}, status=200)
@@ -60,9 +60,9 @@ class ItemView(View):
 
             item = Item.objects.get(name=item_name)
 
-            item.name = data['name']
-            item.price = data['price']
-            item.quantity = data['quantity']
+            item.name      = data['name']
+            item.price     = data['price']
+            item.quantity  = data['quantity']
             item.image_url = data['image_url']
 
             item.save()
