@@ -27,15 +27,15 @@ class ItemView(View):
         try:
             data  = json.loads(request.body)
 
-            category  = data['category']
-            name      = data['name']
-            price     = data['price']
-            quantity  = data['quantity']
-            image_url = data['image_url']
+            category_id = data['category_id']
+            name        = data['name']
+            price       = data['price']
+            quantity    = data['quantity']
+            image_url   = data['image_url']
 
-            category = Category.objects.get(name=category)
+            category = Category.objects.get(id=category_id)
 
-            if Item.objects.exists(name):
+            if Item.objects.filter(name=name).exists():
                 return JsonResponse({'ERROR' : 'Item already exist'}, status=400)
 
             Item.objects.create(

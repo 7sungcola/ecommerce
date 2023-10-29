@@ -44,18 +44,21 @@ class CartView(View):
             item_id = data['id']
             quantity = data['quantity']
 
-            if Item.objects.filter(id=item_id):
+            if not Item.objects.filter(id=item_id):
                 return JsonResponse({'MESSAGE' : 'Item does not exist'}, status=400)
 
             cart, created = Cart.objects.get_or_create(
                 user_id = user_id,
                 item_id = item_id,
+                defaults = {'quantity' : quantity}
             )
 
-            cart.quantity += quantity
+            if not created:
+                cart.quantity += quantity
+
             cart.save()
 
-            return JsonResponse({'MESSAGE' : 'SUCCESS'}, status=201)
+            return JsonResponse({'MESSAGE' : 'Created'}, status=201)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
