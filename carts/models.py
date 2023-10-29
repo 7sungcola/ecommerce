@@ -7,8 +7,7 @@ from core.models  import TimeStampModel
 class Cart(TimeStampModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField()
-    active = models.BooleanField(default=True)
+    quantity = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         db_table = 'carts'

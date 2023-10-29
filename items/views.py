@@ -36,7 +36,7 @@ class ItemView(View):
             category = Category.objects.get(name=category)
 
             if Item.objects.exists(name):
-                return JsonResponse({'ERROR' : 'Item already exists'}, status=400)
+                return JsonResponse({'ERROR' : 'Item already exist'}, status=400)
 
             Item.objects.create(
                 category_id = category.id,
