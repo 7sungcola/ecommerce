@@ -8,7 +8,7 @@ from core.utils   import authorization
 from .models      import Cart
 from items.models import Item
 
-class AddCartView(View):
+class CartView(View):
     @authorization
     def get(self, request):
         try:
