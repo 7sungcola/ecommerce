@@ -3,6 +3,7 @@ import json
 from django.views           import View
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
+from django.core.serializers import serialize
 
 from .models                import Item, Category
 from core.utils             import authorization
@@ -46,7 +47,7 @@ class ItemView(View):
                 image_url   = image_url,
             )
 
-            return JsonResponse({'MESSAGE' : 'Created'}, status=200)
+            return JsonResponse({'MESSAGE' : 'Created'}, status=201)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
@@ -88,6 +89,22 @@ class ItemView(View):
 
             else:
                 return JsonResponse({'ERROR': 'Item does not exist'}, status=400)
+
+        except ValidationError as e:
+            return JsonResponse({'ERROR' : e.message}, status=400)
+
+class SearchItemView(View):
+    def get(self, request):
+        try:
+            name = request.GET.get('name', None)
+
+            result = Item.objects.filter(name__icontains=name)
+
+            serialized_data = serialize('json', result)
+            serialized_data = json.loads(serialized_data)
+            print(serialized_data)
+
+            return JsonResponse({'RESULT' : serialized_data}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
