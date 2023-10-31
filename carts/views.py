@@ -1,12 +1,13 @@
 import json
 
-from django.http  import JsonResponse
-from django.views import View
+from django.http            import JsonResponse
+from django.views           import View
 from django.core.exceptions import ValidationError
+from django.db.models       import F, Sum
 
-from core.utils   import authorization
-from .models      import Cart
-from items.models import Item
+from core.utils             import authorization
+from .models                import Cart
+from items.models           import Item
 
 class CartView(View):
     @authorization
@@ -21,14 +22,15 @@ class CartView(View):
 
             cart_total = [{
                 'cart_id' : cart.id,
-                'item' : cart.quantity,
                 'name' : cart.item.name,
                 'price' : cart.item.price,
-                'quantity' : cart.item.quantity,
+                'quantity' : cart.quantity,
                 'image_url' : cart.item.image_url,
             } for cart in carts]
 
-            return JsonResponse({'result' : cart_total}, status=200)
+            price_total = Cart.objects.aggregate(price_total=Sum(F('item__price') * F('quantity')))
+
+            return JsonResponse({'result' : cart_total, 'price_total' : price_total}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
@@ -55,8 +57,8 @@ class CartView(View):
 
             if not created:
                 cart.quantity += quantity
-
-            cart.save()
+                cart.save()
+                return JsonResponse({'MESSAGE' : 'Updated'}, status=200)
 
             return JsonResponse({'MESSAGE' : 'Created'}, status=201)
 

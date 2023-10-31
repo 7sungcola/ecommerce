@@ -102,7 +102,6 @@ class SearchItemView(View):
 
             serialized_data = serialize('json', result)
             serialized_data = json.loads(serialized_data)
-            print(serialized_data)
 
             return JsonResponse({'RESULT' : serialized_data}, status=200)
 
