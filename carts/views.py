@@ -28,7 +28,7 @@ class CartView(View):
                 'image_url' : cart.item.image_url,
             } for cart in carts]
 
-            price_total = Cart.objects.aggregate(price_total=Sum(F('item__price') * F('quantity')))
+            price_total = carts.aggregate(price_total=Sum(F('item__price') * F('quantity')))
 
             return JsonResponse({'result' : cart_total, 'price_total' : price_total}, status=200)
 
