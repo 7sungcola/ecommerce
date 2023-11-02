@@ -35,6 +35,9 @@ class CartView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
     @authorization
     def post(self, request):
         try:
@@ -65,29 +68,8 @@ class CartView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
-    # @authorization
-    # def patch(self, request):
-    #     try:
-    #         data = json.loads(request.body)
-    #
-    #         user = request.user
-    #
-    #         cart_id = data['id']
-    #         user_id = user.id
-    #         quantity = data['quantity']
-    #
-    #         if not Cart.objects.filter(id=cart_id).exists():
-    #             return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
-    #
-    #         cart = Cart.objects.get(id=cart_id,user__id=user_id)
-    #
-    #         cart.quantity = quantity
-    #         cart.save()
-    #
-    #         return JsonResponse({'MESSAGE' : 'Updated'}, status=200)
-    #
-    #     except ValidationError as e:
-    #         return JsonResponse({'ERROR' : e.message}, status=200)
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
     @authorization
     def delete(self, request):
@@ -108,3 +90,6 @@ class CartView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)

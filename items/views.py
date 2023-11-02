@@ -23,6 +23,9 @@ class ItemView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
     @authorization
     def post(self, request):
         try:
@@ -51,6 +54,9 @@ class ItemView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
     @authorization
     def patch(self, request):
@@ -93,6 +99,9 @@ class ItemView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
 class SearchItemView(View):
     def get(self, request):
         try:
@@ -107,3 +116,6 @@ class SearchItemView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)

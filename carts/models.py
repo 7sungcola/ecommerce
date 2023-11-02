@@ -11,6 +11,3 @@ class Cart(TimeStampModel):
 
     class Meta:
         db_table = 'carts'
-
-    def __str__(self):
-        return self.item

@@ -21,6 +21,9 @@ class PostView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'Key Error'}, status=400)
+
     @authorization
     def post(self, request):
         try:
@@ -42,6 +45,9 @@ class PostView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'Key Error'}, status=400)
 
     @authorization
     def patch(self, request):
@@ -68,6 +74,8 @@ class PostView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
     @authorization
     def delete(self, request):
@@ -90,6 +98,9 @@ class PostView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
 class PostListView(View):
     def get(self, request, page_num):
