@@ -24,16 +24,13 @@ class OrderItem(TimeStampModel):
     class Meta:
         db_table = 'order_items'
 
-    def __str__(self):
-        return self.item
-
 class OrderStatus(models.Model):
-    status = models.CharField(max_length=10)
-
     class Status(models.IntegerChoices):
         PENDING   = 1
         COMPLETED = 2
         DECLINED  = 3
+
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
 
     class Meta:
         db_table = 'order_status'

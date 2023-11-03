@@ -1,6 +1,8 @@
 import json
 import uuid
 
+from django.db import transaction
+
 from core.utils             import authorization
 from carts.models           import Cart
 from .models                import Order, OrderItem, OrderStatus
@@ -18,13 +20,7 @@ class OrderView(View):
 
             user = request.user
 
-            # user_id = user.id
-
             address = data['address']
-            order_number = data['order_number']
-            order_status = data['order_status']
-
-            print(data)
 
             carts = Cart.objects.filter(
                 user=user
@@ -34,25 +30,17 @@ class OrderView(View):
                 price = Sum(F('item__quantity') * F('item__price'))
             )
 
-            print(carts)
-
-            total_price = carts.aggregate(
-                total_price = Sum('price')
-            )['total_price']
-
-            print(total_price)
-
             order = Order(
-                user    = user,
-                address = address,
-                order_number = uuid.uuid4(),
+                user            = user,
+                address         = address,
+                order_number    = str(uuid.uuid4()),
                 order_status_id = OrderStatus.Status.PENDING
             )
 
             order_items = [
                 OrderItem(
-                    item = cart.item,
-                    order = order,
+                    item     = cart.item,
+                    order    = order,
                     quantity = cart.quantity
                 ) for cart in carts
             ]
@@ -65,6 +53,49 @@ class OrderView(View):
             OrderItem.objects.bulk_create(order_items)
 
             return JsonResponse({'MESSAGE' : 'Created'}, status=201)
+
+        except ValidationError as e:
+            return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
+    @authorization
+    def get(self, request, **kwargs):
+        try:
+            user = request.user
+
+            order_id = kwargs['order_id']
+
+            order = Order.objects.get(user=user, id=order_id)
+
+            order_item = OrderItem.objects.filter(
+                order=order
+            ).select_related(
+                'item'
+            ).annotate(
+                price=Sum(F('item__quantity') * F('item__price'))
+            )
+
+            total_price = order_item.aggregate(
+                total_price=Sum('price')
+            )['total_price']
+
+            result = {
+                'name' : user.name,
+                'address' : order.address,
+                'order_number' : order.order_number,
+                'total_price' : total_price,
+                'order_item' : [
+                    {
+                        'item' : order_item.item.name,
+                        'quantity' : order_item.quantity,
+                        'price' : order_item.item.price
+                    } for order_item in order.orderitem_set.all()
+                ]
+            }
+
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : result}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)

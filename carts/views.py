@@ -18,7 +18,7 @@ class CartView(View):
             if not Cart.objects.filter(user_id=user.id).exists():
                 return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
 
-            carts = Cart.objects.filter(user_id=user.id)
+            carts = Cart.objects.filter(user=user)
 
             cart_total = [{
                 'cart_id' : cart.id,
@@ -30,7 +30,7 @@ class CartView(View):
 
             price_total = carts.aggregate(price_total=Sum(F('item__price') * F('quantity')))
 
-            return JsonResponse({'result' : cart_total, 'price_total' : price_total}, status=200)
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : cart_total, 'PRICE_TOTAL' : price_total}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)

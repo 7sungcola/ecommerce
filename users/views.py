@@ -134,7 +134,7 @@ class SignInView(View):
             payload = {'id' : user.id}
             token   = jwt.encode(payload, SECRET_KEY, ALGORITHM)
 
-            return JsonResponse({'MESSAGE' : 'Success', 'TOKEN' : token}, status=200)
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'TOKEN' : token}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
