@@ -10,13 +10,9 @@ from core.utils             import authorization
 
 # Create your views here.
 class ItemView(View):
-    def get(self, request):
+    def get(self, request, item):
         try:
-            data = json.loads(request.body)
-
-            name = data['name']
-
-            item_found = Item.objects.get(name=name)
+            item_found = Item.objects.get(name=item)
 
             return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : item_found}, status=200)
 

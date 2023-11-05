@@ -1,7 +1,4 @@
-import json
-import uuid
-
-from django.db import transaction
+import json, uuid
 
 from core.utils             import authorization
 from carts.models           import Cart
