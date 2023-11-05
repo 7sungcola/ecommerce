@@ -20,6 +20,8 @@ class CartView(View):
 
             carts = Cart.objects.filter(user=user)
 
+            print(type(carts))
+
             cart_total = [{
                 'cart_id' : cart.id,
                 'name' : cart.item.name,
@@ -53,7 +55,7 @@ class CartView(View):
                 return JsonResponse({'ERROR' : 'Item does not exist'}, status=400)
 
             if quantity > Item.objects.get(id=item_id).quantity:
-                return JsonResponse({'ERROR' : 'Item amount available'}, status=400)
+                return JsonResponse({'ERROR' : 'Item stock unavailable'}, status=400)
 
             cart, created = Cart.objects.get_or_create(
                 user_id = user_id,

@@ -3,6 +3,7 @@ import json, uuid
 from core.utils             import authorization
 from carts.models           import Cart
 from .models                import Order, OrderItem, OrderStatus
+from items.models           import Item
 
 from django.http            import JsonResponse
 from django.views           import View
@@ -34,13 +35,25 @@ class OrderView(View):
                 order_status_id = OrderStatus.Status.PENDING
             )
 
-            order_items = [
-                OrderItem(
-                    item     = cart.item,
-                    order    = order,
-                    quantity = cart.quantity
-                ) for cart in carts
-            ]
+            # order_items = [
+            #     OrderItem(
+            #         item     = cart.item,
+            #         order    = order,
+            #         quantity = cart.quantity
+            #     ) for cart in carts
+            # ]
+
+            for cart in carts:
+                order_items = [
+                    OrderItem(
+                        item=cart.item,
+                        order=order,
+                        quantity=cart.quantity
+                    )
+                ]
+                item = Item.objects.get(id=cart.item)
+                item.quantity = F('quantity') - cart.quantity
+                item.quantity.save()
 
             carts.delete()
 
