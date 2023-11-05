@@ -51,9 +51,9 @@ class OrderView(View):
                         quantity=cart.quantity
                     )
                 ]
-                item = Item.objects.get(id=cart.item)
+                item = Item.objects.get(id=cart.item.id)
                 item.quantity = F('quantity') - cart.quantity
-                item.quantity.save()
+                item.save()
 
             carts.delete()
 
