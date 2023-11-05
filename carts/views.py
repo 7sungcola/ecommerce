@@ -50,7 +50,10 @@ class CartView(View):
             quantity = data['quantity']
 
             if not Item.objects.filter(id=item_id):
-                return JsonResponse({'MESSAGE' : 'Item does not exist'}, status=400)
+                return JsonResponse({'ERROR' : 'Item does not exist'}, status=400)
+
+            if quantity > Item.objects.get(id=item_id).quantity:
+                return JsonResponse({'ERROR' : 'Item amount available'}, status=400)
 
             cart, created = Cart.objects.get_or_create(
                 user_id = user_id,

@@ -10,11 +10,16 @@ from core.utils             import authorization
 
 # Create your views here.
 class ItemView(View):
-    def get(self, request, item):
+    def get(self, request):
         try:
-            item_found = Item.objects.get(name=item)
+            name = request.GET.get('name', None)
 
-            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : item_found}, status=200)
+            item_found = Item.objects.filter(name=name)
+
+            serialized_data = serialize('json', item_found)
+            serialized_data = json.loads(serialized_data)
+
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data[0]['fields']}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
@@ -108,7 +113,7 @@ class SearchItemView(View):
             serialized_data = serialize('json', result)
             serialized_data = json.loads(serialized_data)
 
-            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data}, status=200)
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data[0]['fields']}, status=200)
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
