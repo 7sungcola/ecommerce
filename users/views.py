@@ -72,16 +72,6 @@ def kakao_callback(request):
 
     return JsonResponse({'MESSAGE' : name}, json_dumps_params={'ensure_ascii':False}, status=200)
 
-def google_login(request):
-    result = request.user
-    print(result)
-    print(request)
-
-    return JsonResponse({'MESSAGE' : str(result)}, status=200)
-
-def google_callback(request):
-    pass
-
 def index(request):
     return render(request, 'user/index.html', {})
 
@@ -113,6 +103,9 @@ class SignUpView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
 class SignInView(View):
     def post(self, request):
         try:
@@ -141,3 +134,6 @@ class SignInView(View):
 
         except User.DoesNotExist:
             return JsonResponse({'ERROR' : 'Failed to Login'}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)

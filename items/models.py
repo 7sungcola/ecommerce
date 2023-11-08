@@ -1,6 +1,7 @@
-from django.db              import models
+from django.db    import models
 
-from core.models            import TimeStampModel
+from core.models  import TimeStampModel
+from users.models import User
 
 class Item(TimeStampModel):
     category   = models.ForeignKey('Category', on_delete=models.CASCADE)
@@ -24,3 +25,14 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+class Review(TimeStampModel):
+    item = models.ForeignKey('Item', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.CharField(max_length=1000)
+
+    class Meta:
+        db_table = 'reviews'
+
+    def __str__(self):
+        return self.body

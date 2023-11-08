@@ -18,7 +18,7 @@ class CartView(View):
             if not Cart.objects.filter(user_id=user.id).exists():
                 return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
 
-            carts = Cart.objects.filter(user=user)
+            carts = Cart.objects.filter(user=user).select_related('item')
 
             print(type(carts))
 

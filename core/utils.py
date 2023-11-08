@@ -11,7 +11,7 @@ def authorization(func):
             token        = request.headers.get('Authorization')
 
             if not token:
-                return JsonResponse({'ERROR' : 'Token required'}, status = 400)
+                return JsonResponse({'ERROR' : 'Token required'}, status = 401)
 
             payload      = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
             request.user = User.objects.get(id=payload['id'])
@@ -19,9 +19,9 @@ def authorization(func):
             return func(self, request, *args, **kwargs)
 
         except jwt.exceptions.DecodeError:
-            return JsonResponse({'ERROR' : 'Invalid token'}, status = 400)
+            return JsonResponse({'ERROR' : 'Invalid token'}, status = 401)
 
         except User.DoesNotExist:
-            return JsonResponse({'ERROR' : 'Invalid User'}, status = 400)
+            return JsonResponse({'ERROR' : 'Invalid User'}, status = 401)
 
     return wrapper

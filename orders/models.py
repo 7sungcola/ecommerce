@@ -6,9 +6,9 @@ from core.models  import TimeStampModel
 
 class Order(TimeStampModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order_status = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
     address = models.CharField(max_length=500)
     order_number = models.CharField(max_length=150, unique=True)
-    order_status = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'orders'
