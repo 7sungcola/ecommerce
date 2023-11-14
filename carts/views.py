@@ -88,7 +88,10 @@ class CartView(View):
             if not Cart.objects.filter(id=cart_id).exists():
                 return JsonResponse({'ERROR' : 'Cart does not exist'}, status=400)
 
-            cart = Cart.objects.get(id=cart_id, user__id=user.id)
+            cart = Cart.objects.get(
+                id=cart_id,
+                user__id=user.id
+            )
             cart.delete()
 
             return JsonResponse({'MESSAGE' : 'Deleted'}, status=200)

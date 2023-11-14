@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.kakao',
 ]
 
@@ -209,4 +208,10 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         }
     }
+}
+
+# django-extensions
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
 }

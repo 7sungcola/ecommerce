@@ -5,7 +5,7 @@ from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 from django.core.serializers import serialize
 
-from .models                import Item, Category
+from .models                import Item, Category, Review
 from core.utils             import authorization
 
 # Create your views here.
@@ -80,6 +80,9 @@ class ItemView(View):
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
 
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
     @authorization
     def delete(self, request):
         try:
@@ -117,6 +120,50 @@ class SearchItemView(View):
 
         except ValidationError as e:
             return JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
+class ReviewView(View):
+    def get(self, request):
+        try:
+            name = request.GET.get('name', None)
+
+            review_found = Review.objects.filter(item__name=name)
+
+            serialized_data = serialize('json', review_found)
+            serialized_data = json.loads(serialized_data)
+
+            JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data[0]['fields']})
+
+        except ValidationError as e:
+            JsonResponse({'ERROR' : e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
+    @authorization
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+
+            user = request.user
+
+            body = data['body']
+
+            name = request.GET.get('name', None)
+            item = Item.objects.get(name=name)
+
+            Review.objects.create(
+                item = item,
+                user = user,
+                body = body
+            )
+
+            JsonResponse({'MESSAGE' : 'Created'}, status=201)
+
+        except ValidationError as e:
+            JsonResponse({'ERROR' : e.message}, status=400)
 
         except KeyError:
             return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)

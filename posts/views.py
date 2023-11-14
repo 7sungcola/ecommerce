@@ -22,7 +22,7 @@ class PostView(View):
             return JsonResponse({'ERROR' : e.message}, status=400)
 
         except KeyError:
-            return JsonResponse({'ERROR' : 'Key Error'}, status=400)
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
     @authorization
     def post(self, request):
@@ -47,7 +47,7 @@ class PostView(View):
             return JsonResponse({'ERROR' : e.message}, status=400)
 
         except KeyError:
-            return JsonResponse({'ERROR' : 'Key Error'}, status=400)
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
     @authorization
     def patch(self, request):
@@ -118,7 +118,7 @@ class PostListView(View):
             return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : product_offset, 'PAGES_TOTAL' : total_pages, 'ITEMS_TOTAL' : total_items}, status=200)
 
         except KeyError:
-            return JsonResponse({'ERROR' : 'Key Error'}, status=400)
+            return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
 
         except ValueError:
             return JsonResponse({'ERROR' : 'Invalid Parameter'}, status=400)
