@@ -109,9 +109,9 @@ class ItemView(View):
 class SearchItemView(View):
     def get(self, request):
         try:
-            name = request.GET.get('name', None)
+            item_name = request.GET.get('name', None)
 
-            result = Item.objects.filter(name__icontains=name)
+            result = Item.objects.filter(name__icontains=item_name)
 
             serialized_data = serialize('json', result)
             serialized_data = json.loads(serialized_data)
@@ -127,9 +127,9 @@ class SearchItemView(View):
 class ReviewView(View):
     def get(self, request):
         try:
-            name = request.GET.get('name', None)
+            item_name = request.GET.get('name', None)
 
-            review_found = Review.objects.filter(item__name=name)
+            review_found = Review.objects.filter(item__name=item_name)
 
             serialized_data = serialize('json', review_found)
             serialized_data = json.loads(serialized_data)
@@ -151,8 +151,8 @@ class ReviewView(View):
 
             body = data['body']
 
-            name = request.GET.get('name', None)
-            item = Item.objects.get(name=name)
+            item_name = request.GET.get('name', None)
+            item = Item.objects.get(name=item_name)
 
             Review.objects.create(
                 item = item,
@@ -167,3 +167,72 @@ class ReviewView(View):
 
         except KeyError:
             return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
+
+    @authorization
+    def patch(self, request):
+        try:
+            data = json.loads(request.body)
+
+            user = request.user
+
+            item_name = request.GET.get('name', None)
+
+            review = Review.objects.filter(item__name=item_name, user=user)
+
+            review.body = data['body']
+            review.save()
+
+            JsonResponse({'MESSAGE': 'Updated'}, status=200)
+
+        except ValidationError as e:
+            JsonResponse({'ERROR': e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR': 'KEY_ERROR'}, status=400)
+
+    @authorization
+    def patch(self, request):
+        try:
+            data = json.loads(request.body)
+
+            user = request.user
+
+            item_name = request.GET.get('name', None)
+
+            review = Review.objects.filter(item__name=item_name, user=user)
+
+            review.body = data['body']
+            review.save()
+
+            JsonResponse({'MESSAGE': 'Updated'}, status=200)
+
+        except ValidationError as e:
+            JsonResponse({'ERROR': e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR': 'KEY_ERROR'}, status=400)
+
+    @authorization
+    def delete(self, request):
+        try:
+            data = json.loads(request.body)
+
+            user = request.user
+
+            item_name = request.GET.get('name', None)
+
+            review = Review.objects.filter(item__name=item_name, user=user)
+
+            if review.exists():
+                review.delete()
+
+                JsonResponse({'MESSAGE': 'Deleted'}, status=200)
+
+            else:
+                JsonResponse({'ERROR': 'Review does not exist'}, status=400)
+
+        except ValidationError as e:
+            JsonResponse({'ERROR': e.message}, status=400)
+
+        except KeyError:
+            return JsonResponse({'ERROR': 'KEY_ERROR'}, status=400)
