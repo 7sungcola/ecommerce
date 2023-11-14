@@ -44,7 +44,7 @@ class ItemView(View):
                 return JsonResponse({'ERROR' : 'Item already exist'}, status=400)
 
             Item.objects.create(
-                category_id = category.id,
+                category    = category,
                 name        = name,
                 price       = price,
                 quantity    = quantity,
@@ -134,10 +134,10 @@ class ReviewView(View):
             serialized_data = serialize('json', review_found)
             serialized_data = json.loads(serialized_data)
 
-            JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data[0]['fields']})
+            return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data[0]['fields']})
 
         except ValidationError as e:
-            JsonResponse({'ERROR' : e.message}, status=400)
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
         except KeyError:
             return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
@@ -160,10 +160,10 @@ class ReviewView(View):
                 body = body
             )
 
-            JsonResponse({'MESSAGE' : 'Created'}, status=201)
+            return JsonResponse({'MESSAGE' : 'Created'}, status=201)
 
         except ValidationError as e:
-            JsonResponse({'ERROR' : e.message}, status=400)
+            return JsonResponse({'ERROR' : e.message}, status=400)
 
         except KeyError:
             return JsonResponse({'ERROR' : 'KEY_ERROR'}, status=400)
@@ -177,37 +177,15 @@ class ReviewView(View):
 
             item_name = request.GET.get('name', None)
 
-            review = Review.objects.filter(item__name=item_name, user=user)
+            review = Review.objects.get(item__name=item_name, user=user)
 
             review.body = data['body']
             review.save()
 
-            JsonResponse({'MESSAGE': 'Updated'}, status=200)
+            return JsonResponse({'MESSAGE': 'Updated'}, status=200)
 
         except ValidationError as e:
-            JsonResponse({'ERROR': e.message}, status=400)
-
-        except KeyError:
-            return JsonResponse({'ERROR': 'KEY_ERROR'}, status=400)
-
-    @authorization
-    def patch(self, request):
-        try:
-            data = json.loads(request.body)
-
-            user = request.user
-
-            item_name = request.GET.get('name', None)
-
-            review = Review.objects.filter(item__name=item_name, user=user)
-
-            review.body = data['body']
-            review.save()
-
-            JsonResponse({'MESSAGE': 'Updated'}, status=200)
-
-        except ValidationError as e:
-            JsonResponse({'ERROR': e.message}, status=400)
+            return JsonResponse({'ERROR': e.message}, status=400)
 
         except KeyError:
             return JsonResponse({'ERROR': 'KEY_ERROR'}, status=400)
@@ -215,8 +193,6 @@ class ReviewView(View):
     @authorization
     def delete(self, request):
         try:
-            data = json.loads(request.body)
-
             user = request.user
 
             item_name = request.GET.get('name', None)
@@ -226,13 +202,13 @@ class ReviewView(View):
             if review.exists():
                 review.delete()
 
-                JsonResponse({'MESSAGE': 'Deleted'}, status=200)
+                return JsonResponse({'MESSAGE': 'Deleted'}, status=200)
 
             else:
-                JsonResponse({'ERROR': 'Review does not exist'}, status=400)
+                return JsonResponse({'ERROR': 'Review does not exist'}, status=400)
 
         except ValidationError as e:
-            JsonResponse({'ERROR': e.message}, status=400)
+            return JsonResponse({'ERROR': e.message}, status=400)
 
         except KeyError:
             return JsonResponse({'ERROR': 'KEY_ERROR'}, status=400)

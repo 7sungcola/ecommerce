@@ -35,14 +35,15 @@ class OrderView(View):
                 order_status_id = OrderStatus.Status.PENDING
             )
 
+            order_items = [
+                OrderItem(
+                    item=cart.item,
+                    order=order,
+                    quantity=cart.quantity
+                ) for cart in carts
+            ]
+
             for cart in carts:
-                order_items = [
-                    OrderItem(
-                        item=cart.item,
-                        order=order,
-                        quantity=cart.quantity
-                    )
-                ]
                 item = Item.objects.get(id=cart.item.id)
                 item.quantity = F('quantity') - cart.quantity
                 item.save()
