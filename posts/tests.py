@@ -29,6 +29,7 @@ class PostViewTest(TestCase):
         )
 
         self.token = jwt.encode({'id': self.user.id}, SECRET_KEY, ALGORITHM)
+
     def tearDown(self):
         User.objects.all().delete()
         Post.objects.all().delete()

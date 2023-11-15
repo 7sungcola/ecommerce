@@ -19,7 +19,7 @@ class ItemViewTest(TestCase):
             password='123456789!@',
         )
 
-        category = Category.objects.create(
+        Category.objects.create(
             id=1,
             name='test_category',
             thumbnail=''
@@ -104,4 +104,3 @@ class ItemViewTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'ERROR': 'KEY_ERROR'})
-
