@@ -20,8 +20,6 @@ class CartView(View):
 
             carts = Cart.objects.filter(user=user).select_related('item')
 
-            print(type(carts))
-
             cart_total = [{
                 'cart_id' : cart.id,
                 'name' : cart.item.name,

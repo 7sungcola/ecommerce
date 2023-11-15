@@ -40,7 +40,7 @@ class PostViewTest(TestCase):
             'body': 'hello this is test code for post view heuh heuh heuh',
         }
         response = self.client.post(
-            '/posts/post', json.dumps(post), content_type="application/json", **headers
+            '/posts', json.dumps(post), content_type="application/json", **headers
         )
 
         self.assertEqual(response.status_code, 201)
@@ -52,7 +52,7 @@ class PostViewTest(TestCase):
             'title':'Test for post',
         }
         response = self.client.post(
-            '/posts/post', json.dumps(post), content_type="application/json", **headers
+            '/posts', json.dumps(post), content_type="application/json", **headers
         )
 
         self.assertEqual(response.status_code, 400)

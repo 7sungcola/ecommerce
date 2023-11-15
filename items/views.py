@@ -1,4 +1,5 @@
 import json
+from datetime               import datetime
 
 from django.views           import View
 from django.http            import JsonResponse
@@ -18,6 +19,14 @@ class ItemView(View):
 
             serialized_data = serialize('json', item_found)
             serialized_data = json.loads(serialized_data)
+
+            created_at_str = serialized_data[0]['fields']['created_at']
+            created_at_obj = datetime.strptime(created_at_str, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d %H:%M:%S')
+            modified_at_str = serialized_data[0]['fields']['created_at']
+            modified_at_obj = datetime.strptime(modified_at_str, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d %H:%M:%S')
+
+            serialized_data[0]['fields']['created_at'] = created_at_obj
+            serialized_data[0]['fields']['modified_at'] = modified_at_obj
 
             return JsonResponse({'MESSAGE' : 'SUCCESS', 'RESULT' : serialized_data[0]['fields']}, status=200)
 
