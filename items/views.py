@@ -20,6 +20,7 @@ class ItemView(View):
             serialized_data = serialize('json', item_found)
             serialized_data = json.loads(serialized_data)
 
+            # modify timestamp format for item data in order to run item view test without issue -> alternatively can modify database
             created_at_str = serialized_data[0]['fields']['created_at']
             created_at_obj = datetime.strptime(created_at_str, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d %H:%M:%S')
             modified_at_str = serialized_data[0]['fields']['created_at']
